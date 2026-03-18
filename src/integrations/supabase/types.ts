@@ -14,7 +14,65 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      telltale_images: {
+        Row: {
+          created_at: string
+          id: string
+          storage_path: string
+          telltale_id: string
+          url: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          storage_path: string
+          telltale_id: string
+          url: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          storage_path?: string
+          telltale_id?: string
+          url?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "telltale_images_telltale_id_fkey"
+            columns: ["telltale_id"]
+            isOneToOne: false
+            referencedRelation: "telltales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      telltales: {
+        Row: {
+          created_at: string
+          description: string | null
+          id: string
+          name: string
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name: string
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          description?: string | null
+          id?: string
+          name?: string
+          status?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
