@@ -25,12 +25,29 @@ function useAdminUsers() {
   return useQuery({
     queryKey: ["admin-users"],
     queryFn: async (): Promise<ProfileWithRoles[]> => {
-      const { data, error } = await supabase
+      const { data: profiles, error: pErr } = await supabase
         .from("profiles")
-        .select("*, user_roles(role)")
+        .select("*")
         .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data as ProfileWithRoles[];
+      if (pErr) throw pErr;
+
+      const { data: roles, error: rErr } = await supabase
+        .from("user_roles")
+        .select("user_id, role");
+      if (rErr) throw rErr;
+
+      const roleMap = new Map<string, { role: AppRole }[]>();
+      for (const r of roles || []) {
+        const arr = roleMap.get(r.user_id) || [];
+        arr.push({ role: r.role as AppRole });
+        roleMap.set(r.user_id, arr);
+      }
+
+      return (profiles || []).map((p) => ({
+        ...p,
+        status: p.status as ApprovalStatus,
+        user_roles: roleMap.get(p.user_id) || [],
+      })) as ProfileWithRoles[];
     },
   });
 }
