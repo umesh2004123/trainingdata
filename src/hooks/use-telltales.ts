@@ -18,7 +18,6 @@ export function useTelltales() {
     },
   });
 
-  // Realtime subscription
   useEffect(() => {
     const channel = supabase
       .channel("telltales-realtime")
@@ -29,10 +28,7 @@ export function useTelltales() {
         queryClient.invalidateQueries({ queryKey: ["telltales"] });
       })
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [queryClient]);
 
   return query;
@@ -65,10 +61,7 @@ export function useTelltale(id: string) {
         queryClient.invalidateQueries({ queryKey: ["telltale", id] });
       })
       .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
+    return () => { supabase.removeChannel(channel); };
   }, [id, queryClient]);
 
   return query;
@@ -77,31 +70,34 @@ export function useTelltale(id: string) {
 export function useCreateTelltale() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ name, description, status }: { name: string; description?: string; status?: TelltaleStatus }) => {
+    mutationFn: async ({ name, description, status, category, created_by }: {
+      name: string; description?: string; status?: TelltaleStatus; category?: string; created_by?: string;
+    }) => {
       const { data, error } = await supabase
         .from("telltales")
-        .insert({ name: name.trim(), description: description?.trim() || null, status: status || "not_started" })
+        .insert({
+          name: name.trim(),
+          description: description?.trim() || null,
+          status: status || "not_started",
+          category: category || null,
+          created_by: created_by || null,
+        })
         .select()
         .single();
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["telltales"] });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["telltales"] }); },
   });
 }
 
 export function useUpdateTelltale() {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async ({ id, ...updates }: { id: string; name?: string; description?: string | null; status?: TelltaleStatus }) => {
-      const { data, error } = await supabase
-        .from("telltales")
-        .update(updates)
-        .eq("id", id)
-        .select()
-        .single();
+    mutationFn: async ({ id, ...updates }: {
+      id: string; name?: string; description?: string | null; status?: TelltaleStatus; category?: string | null;
+    }) => {
+      const { data, error } = await supabase.from("telltales").update(updates).eq("id", id).select().single();
       if (error) throw error;
       return data;
     },
@@ -119,9 +115,7 @@ export function useDeleteTelltale() {
       const { error } = await supabase.from("telltales").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["telltales"] });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["telltales"] }); },
   });
 }
 
@@ -132,25 +126,15 @@ export function useUploadImages() {
       const uploads = files.map(async (file) => {
         const ext = file.name.split(".").pop();
         const path = `${telltaleId}/${crypto.randomUUID()}.${ext}`;
-        const { error: uploadError } = await supabase.storage
-          .from("telltale-images")
-          .upload(path, file);
+        const { error: uploadError } = await supabase.storage.from("telltale-images").upload(path, file);
         if (uploadError) throw uploadError;
-
-        const { data: urlData } = supabase.storage
-          .from("telltale-images")
-          .getPublicUrl(path);
-
-        const { error: insertError } = await supabase
-          .from("telltale_images")
-          .insert({ telltale_id: telltaleId, url: urlData.publicUrl, storage_path: path });
+        const { data: urlData } = supabase.storage.from("telltale-images").getPublicUrl(path);
+        const { error: insertError } = await supabase.from("telltale_images").insert({ telltale_id: telltaleId, url: urlData.publicUrl, storage_path: path });
         if (insertError) throw insertError;
       });
       await Promise.all(uploads);
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["telltales"] });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["telltales"] }); },
   });
 }
 
@@ -162,8 +146,6 @@ export function useDeleteImage() {
       const { error } = await supabase.from("telltale_images").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["telltales"] });
-    },
+    onSuccess: () => { queryClient.invalidateQueries({ queryKey: ["telltales"] }); },
   });
 }
