@@ -30,6 +30,17 @@ export default function TelltaleDetail() {
   const uploadImages = useUploadImages();
   const deleteImage = useDeleteImage();
   const setTelltaleStandards = useSetTelltaleStandards();
+  const isFavorite = useIsFavorite(id!);
+  const toggleFavorite = useToggleFavorite();
+  const trackView = useTrackView();
+  const trackEvent = useTrackEvent();
+
+  useEffect(() => {
+    if (id) {
+      trackView.mutate(id);
+      trackEvent.mutate({ eventType: "view_telltale", metadata: { telltale_id: id } });
+    }
+  }, [id]);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
