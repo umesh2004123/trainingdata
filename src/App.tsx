@@ -15,6 +15,8 @@ import ResetPassword from "./pages/ResetPassword";
 import PendingApproval from "./pages/PendingApproval";
 import AdminUsers from "./pages/AdminUsers";
 import AdminStandards from "./pages/AdminStandards";
+import AdminAnalytics from "./pages/AdminAnalytics";
+import Favorites from "./pages/Favorites";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -38,10 +40,12 @@ const App = () => (
             <Route path="/telltales" element={<ProtectedRoute requireApproved><TelltaleList /></ProtectedRoute>} />
             <Route path="/telltales/new" element={<ProtectedRoute requireApproved><AddTelltale /></ProtectedRoute>} />
             <Route path="/telltales/:id" element={<ProtectedRoute requireApproved><TelltaleDetail /></ProtectedRoute>} />
+            <Route path="/favorites" element={<ProtectedRoute requireApproved><Favorites /></ProtectedRoute>} />
 
             {/* Admin routes */}
             <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
             <Route path="/admin/standards" element={<ProtectedRoute requireAdmin><AdminStandards /></ProtectedRoute>} />
+            <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><AdminAnalytics /></ProtectedRoute>} />
 
             <Route path="*" element={<NotFound />} />
           </Routes>
