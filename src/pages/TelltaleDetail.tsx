@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTelltale, useUpdateTelltale, useDeleteTelltale, useUploadImages, useDeleteImage } from "@/hooks/use-telltales";
 import { useTelltaleStandards, useSetTelltaleStandards } from "@/hooks/use-standards";
@@ -15,8 +15,10 @@ import { TelltaleStatus } from "@/types/telltale";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Heart } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useIsFavorite, useToggleFavorite, useTrackView } from "@/hooks/use-favorites";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 export default function TelltaleDetail() {
   const { id } = useParams<{ id: string }>();
