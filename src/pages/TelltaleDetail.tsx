@@ -171,6 +171,12 @@ export default function TelltaleDetail() {
                       ))}
                     </PopoverContent>
                   </Popover>
+                  <button
+                    onClick={() => toggleFavorite.mutate({ telltaleId: id!, isFavorite })}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"}`} />
+                  </button>
                   <button onClick={startEdit} className="p-2 rounded-lg hover:bg-accent transition-colors"><Pencil className="h-4 w-4 text-muted-foreground" /></button>
                   <button onClick={() => setDeleting(true)} className="p-2 rounded-lg hover:bg-destructive/10 transition-colors"><Trash2 className="h-4 w-4 text-destructive" /></button>
                 </div>
