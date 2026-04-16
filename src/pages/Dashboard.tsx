@@ -1,10 +1,12 @@
 import { useTelltales } from "@/hooks/use-telltales";
+import { useRecentlyViewed } from "@/hooks/use-favorites";
+import { useAuth } from "@/hooks/use-auth";
 import { motion } from "framer-motion";
 import { TelltaleCard } from "@/components/TelltaleCard";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
-import { PlusCircle } from "lucide-react";
+import { PlusCircle, Users, BarChart3, Clock } from "lucide-react";
 
 function StatCard({ label, value, color }: { label: string; value: number; color?: string }) {
   return (
@@ -15,8 +17,24 @@ function StatCard({ label, value, color }: { label: string; value: number; color
   );
 }
 
+function QuickAction({ label, icon: Icon, onClick }: { label: string; icon: typeof PlusCircle; onClick: () => void }) {
+  return (
+    <motion.button
+      whileTap={{ scale: 0.98 }}
+      onClick={onClick}
+      className="flex items-center gap-2 bg-card border border-border rounded-xl px-4 py-3 text-sm font-medium text-foreground hover:bg-accent transition-colors"
+      style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}
+    >
+      <Icon className="h-4 w-4 text-muted-foreground" />
+      {label}
+    </motion.button>
+  );
+}
+
 export default function Dashboard() {
   const { data: telltales, isLoading } = useTelltales();
+  const { data: recentlyViewed } = useRecentlyViewed();
+  const { isAdmin } = useAuth();
   const navigate = useNavigate();
 
   const total = telltales?.length || 0;
@@ -45,6 +63,13 @@ export default function Dashboard() {
           </motion.button>
         </div>
 
+        {/* Quick Actions */}
+        <div className="flex flex-wrap gap-3">
+          <QuickAction label="Add Telltale" icon={PlusCircle} onClick={() => navigate("/telltales/new")} />
+          {isAdmin && <QuickAction label="Manage Users" icon={Users} onClick={() => navigate("/admin/users")} />}
+          {isAdmin && <QuickAction label="View Analytics" icon={BarChart3} onClick={() => navigate("/admin/analytics")} />}
+        </div>
+
         {isLoading ? (
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {[...Array(4)].map((_, i) => <Skeleton key={i} className="h-28 rounded-xl" />)}
@@ -55,6 +80,20 @@ export default function Dashboard() {
             <StatCard label="Completed" value={completed} color="text-status-completed" />
             <StatCard label="Ongoing" value={ongoing} color="text-status-ongoing" />
             <StatCard label="Not Started" value={notStarted} color="text-status-not-started" />
+          </div>
+        )}
+
+        {/* Recently Viewed */}
+        {recentlyViewed && recentlyViewed.length > 0 && (
+          <div>
+            <h2 className="text-lg font-semibold tracking-tight text-foreground mb-4 flex items-center gap-2">
+              <Clock className="h-4 w-4 text-muted-foreground" /> Recently Viewed
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {recentlyViewed.slice(0, 3).map((rv) => rv.telltales && (
+                <TelltaleCard key={rv.id} item={rv.telltales as any} />
+              ))}
+            </div>
           </div>
         )}
 
