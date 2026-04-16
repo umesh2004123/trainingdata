@@ -1,4 +1,4 @@
-import { LayoutDashboard, List, PlusCircle, Users, BookOpen, LogOut } from "lucide-react";
+import { LayoutDashboard, List, PlusCircle, Users, BookOpen, LogOut, BarChart3, Heart, Clock } from "lucide-react";
 import { NavLink } from "@/components/NavLink";
 import { useAuth } from "@/hooks/use-auth";
 import {
@@ -22,11 +22,13 @@ export function AppSidebar() {
     { title: "Dashboard", url: "/", icon: LayoutDashboard },
     { title: "Telltales", url: "/telltales", icon: List },
     { title: "Add New", url: "/telltales/new", icon: PlusCircle },
+    { title: "Favorites", url: "/favorites", icon: Heart },
   ];
 
   const adminItems = [
     { title: "Users", url: "/admin/users", icon: Users },
     { title: "Standards", url: "/admin/standards", icon: BookOpen },
+    { title: "Analytics", url: "/admin/analytics", icon: BarChart3 },
   ];
 
   return (

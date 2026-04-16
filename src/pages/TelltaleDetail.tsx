@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useTelltale, useUpdateTelltale, useDeleteTelltale, useUploadImages, useDeleteImage } from "@/hooks/use-telltales";
 import { useTelltaleStandards, useSetTelltaleStandards } from "@/hooks/use-standards";
@@ -15,8 +15,10 @@ import { TelltaleStatus } from "@/types/telltale";
 import { toast } from "sonner";
 import { motion, AnimatePresence } from "framer-motion";
 import { formatDistanceToNow, format } from "date-fns";
-import { ArrowLeft, Pencil, Trash2 } from "lucide-react";
+import { ArrowLeft, Pencil, Trash2, Heart } from "lucide-react";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { useIsFavorite, useToggleFavorite, useTrackView } from "@/hooks/use-favorites";
+import { useTrackEvent } from "@/hooks/use-analytics";
 
 export default function TelltaleDetail() {
   const { id } = useParams<{ id: string }>();
@@ -28,6 +30,17 @@ export default function TelltaleDetail() {
   const uploadImages = useUploadImages();
   const deleteImage = useDeleteImage();
   const setTelltaleStandards = useSetTelltaleStandards();
+  const isFavorite = useIsFavorite(id!);
+  const toggleFavorite = useToggleFavorite();
+  const trackView = useTrackView();
+  const trackEvent = useTrackEvent();
+
+  useEffect(() => {
+    if (id) {
+      trackView.mutate(id);
+      trackEvent.mutate({ eventType: "view_telltale", metadata: { telltale_id: id } });
+    }
+  }, [id]);
   const [editing, setEditing] = useState(false);
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -158,6 +171,12 @@ export default function TelltaleDetail() {
                       ))}
                     </PopoverContent>
                   </Popover>
+                  <button
+                    onClick={() => toggleFavorite.mutate({ telltaleId: id!, isFavorite })}
+                    className="p-2 rounded-lg hover:bg-accent transition-colors"
+                  >
+                    <Heart className={`h-4 w-4 ${isFavorite ? "fill-destructive text-destructive" : "text-muted-foreground"}`} />
+                  </button>
                   <button onClick={startEdit} className="p-2 rounded-lg hover:bg-accent transition-colors"><Pencil className="h-4 w-4 text-muted-foreground" /></button>
                   <button onClick={() => setDeleting(true)} className="p-2 rounded-lg hover:bg-destructive/10 transition-colors"><Trash2 className="h-4 w-4 text-destructive" /></button>
                 </div>

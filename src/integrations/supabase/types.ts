@@ -14,6 +14,60 @@ export type Database = {
   }
   public: {
     Tables: {
+      analytics_events: {
+        Row: {
+          created_at: string
+          event_type: string
+          id: string
+          metadata: Json | null
+          user_id: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_type: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_type?: string
+          id?: string
+          metadata?: Json | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      notifications: {
+        Row: {
+          created_at: string
+          id: string
+          message: string
+          metadata: Json | null
+          read: boolean
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          message: string
+          metadata?: Json | null
+          read?: boolean
+          type?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          message?: string
+          metadata?: Json | null
+          read?: boolean
+          type?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -171,6 +225,64 @@ export type Database = {
           updated_at?: string
         }
         Relationships: []
+      }
+      user_favorites: {
+        Row: {
+          created_at: string
+          id: string
+          telltale_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          telltale_id: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          telltale_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_favorites_telltale_id_fkey"
+            columns: ["telltale_id"]
+            isOneToOne: false
+            referencedRelation: "telltales"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_recent: {
+        Row: {
+          id: string
+          telltale_id: string
+          user_id: string
+          viewed_at: string
+        }
+        Insert: {
+          id?: string
+          telltale_id: string
+          user_id: string
+          viewed_at?: string
+        }
+        Update: {
+          id?: string
+          telltale_id?: string
+          user_id?: string
+          viewed_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_recent_telltale_id_fkey"
+            columns: ["telltale_id"]
+            isOneToOne: false
+            referencedRelation: "telltales"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
