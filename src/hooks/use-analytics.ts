@@ -7,11 +7,11 @@ export function useTrackEvent() {
   return useMutation({
     mutationFn: async ({ eventType, metadata }: { eventType: string; metadata?: Record<string, unknown> }) => {
       if (!user) return;
-      const { error } = await supabase.from("analytics_events").insert({
+      const { error } = await supabase.from("analytics_events").insert([{
         event_type: eventType,
         user_id: user.id,
-        metadata: metadata || {},
-      });
+        metadata: (metadata || {}) as Record<string, unknown>,
+      }]);
       if (error) throw error;
     },
   });
