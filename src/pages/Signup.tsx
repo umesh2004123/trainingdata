@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { lovable } from "@/integrations/lovable/index";
 import { Input } from "@/components/ui/input";
@@ -9,12 +9,12 @@ import { motion } from "framer-motion";
 import { Eye, EyeOff, UserPlus } from "lucide-react";
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [displayName, setDisplayName] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [submitted, setSubmitted] = useState(false);
 
   const handleSignup = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,7 +39,8 @@ export default function Signup() {
     if (error) {
       toast.error(error.message);
     } else {
-      setSubmitted(true);
+      toast.success("Account created successfully");
+      navigate("/");
     }
   };
 
@@ -54,25 +55,6 @@ export default function Signup() {
     if (result.redirected) return;
     toast.success("Signed up successfully");
   };
-
-  if (submitted) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-background px-4">
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="w-full max-w-sm text-center space-y-4">
-          <div className="bg-card border border-border rounded-xl p-8" style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}>
-            <div className="h-12 w-12 rounded-full bg-status-completed/10 text-status-completed flex items-center justify-center mx-auto mb-4">
-              <UserPlus className="h-6 w-6" />
-            </div>
-            <h2 className="text-lg font-semibold text-foreground mb-2">Check your email</h2>
-            <p className="text-sm text-muted-foreground">
-              We've sent a verification link to <strong>{email}</strong>. Please verify your email, then an admin will review your account.
-            </p>
-          </div>
-          <Link to="/login" className="text-sm text-primary hover:underline">Back to login</Link>
-        </motion.div>
-      </div>
-    );
-  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">
