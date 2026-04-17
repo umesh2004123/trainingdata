@@ -2,11 +2,16 @@ import { useAuth } from "@/hooks/use-auth";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
 import { Clock, LogOut, XCircle } from "lucide-react";
+import { Navigate } from "react-router-dom";
 
 export default function PendingApproval() {
-  const { profile, signOut } = useAuth();
+  const { profile, signOut, isAdmin, isApproved, isLoading } = useAuth();
 
   const isRejected = profile?.status === "rejected";
+
+  if (!isLoading && (isAdmin || isApproved)) {
+    return <Navigate to="/" replace />;
+  }
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-background px-4">

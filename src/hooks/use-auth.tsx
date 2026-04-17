@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from "react";
+import { createContext, useContext, useEffect, useRef, useState, ReactNode } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { User, Session } from "@supabase/supabase-js";
 
@@ -35,68 +35,96 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [profile, setProfile] = useState<Profile | null>(null);
   const [roles, setRoles] = useState<AppRole[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const requestIdRef = useRef(0);
 
   const fetchProfile = async (userId: string) => {
-    const { data: profileData } = await supabase
-      .from("profiles")
-      .select("*")
-      .eq("user_id", userId)
-      .single();
+    const [{ data: profileData }, { data: rolesData }] = await Promise.all([
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("user_id", userId)
+        .maybeSingle(),
+      supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", userId),
+    ]);
 
-    const { data: rolesData } = await supabase
-      .from("user_roles")
-      .select("role")
-      .eq("user_id", userId);
-
-    if (profileData) {
-      setProfile(profileData as Profile);
-    }
-    if (rolesData) {
-      setRoles(rolesData.map((r) => r.role as AppRole));
-    }
+    return {
+      profile: (profileData as Profile | null) ?? null,
+      roles: (rolesData ?? []).map((r) => r.role as AppRole),
+    };
   };
 
   const refreshProfile = async () => {
-    if (user) {
-      await fetchProfile(user.id);
-    }
+    if (!user) return;
+
+    const currentRequestId = ++requestIdRef.current;
+    setIsLoading(true);
+
+    const nextProfileState = await fetchProfile(user.id);
+
+    if (currentRequestId !== requestIdRef.current) return;
+
+    setProfile(nextProfileState.profile);
+    setRoles(nextProfileState.roles);
+    setIsLoading(false);
   };
 
   useEffect(() => {
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
+    let isMounted = true;
 
-        if (session?.user) {
-          // defer to avoid deadlock
-          setTimeout(() => fetchProfile(session.user.id), 0);
-        } else {
-          setProfile(null);
-          setRoles([]);
+    const applySession = async (nextSession: Session | null) => {
+      const currentRequestId = ++requestIdRef.current;
+
+      if (!isMounted) return;
+
+      setIsLoading(true);
+      setSession(nextSession);
+      setUser(nextSession?.user ?? null);
+
+      if (!nextSession?.user) {
+        setProfile(null);
+        setRoles([]);
+        if (currentRequestId === requestIdRef.current) {
+          setIsLoading(false);
         }
-        setIsLoading(false);
+        return;
+      }
+
+      const nextProfileState = await fetchProfile(nextSession.user.id);
+
+      if (!isMounted || currentRequestId !== requestIdRef.current) return;
+
+      setProfile(nextProfileState.profile);
+      setRoles(nextProfileState.roles);
+      setIsLoading(false);
+    };
+
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      (_event, nextSession) => {
+        void applySession(nextSession);
       }
     );
 
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setSession(session);
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        fetchProfile(session.user.id);
-      }
-      setIsLoading(false);
+    void supabase.auth.getSession().then(({ data: { session: nextSession } }) => {
+      void applySession(nextSession);
     });
 
-    return () => subscription.unsubscribe();
+    return () => {
+      isMounted = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signOut = async () => {
+    requestIdRef.current += 1;
     await supabase.auth.signOut();
     setUser(null);
     setSession(null);
     setProfile(null);
     setRoles([]);
+    setIsLoading(false);
   };
 
   const isAdmin = roles.includes("admin");
