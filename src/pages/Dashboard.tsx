@@ -132,7 +132,7 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <StatCard label="Total Categories" value={String(categoryGroups.length).padStart(2, "0")} icon={FolderKanban} gradient="bg-gradient-to-br from-primary to-purple-500" />
-            <StatCard label="Total Videos" value={String(total).padStart(2, "0")} icon={Film} gradient="bg-gradient-to-br from-blue-500 to-cyan-500" />
+            <StatCard label="Total Telltales" value={String(total).padStart(2, "0")} icon={Film} gradient="bg-gradient-to-br from-blue-500 to-cyan-500" />
             <StatCard label="Recent Uploads" value={String(recentUploads.length).padStart(2, "0")} icon={Clock} gradient="bg-gradient-to-br from-emerald-500 to-teal-500" />
           </div>
         )}
