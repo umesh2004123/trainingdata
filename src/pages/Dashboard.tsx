@@ -191,7 +191,7 @@ export default function Dashboard() {
         {!isLoading && categoryGroups.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-5" style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}>
             <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-muted-foreground" /> Videos per Category
+              <BarChart3 className="h-4 w-4 text-muted-foreground" /> Telltales per Category
             </h2>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
