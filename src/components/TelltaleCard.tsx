@@ -66,9 +66,11 @@ export function TelltaleCard({ item }: { item: TelltaleWithImages }) {
         )}
       </div>
 
-      <div className="flex items-center text-[10px] uppercase tracking-widest text-muted-foreground font-mono tabular-nums">
-        <span>Updated {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}</span>
-      </div>
+      {item.updated_at && !isNaN(new Date(item.updated_at).getTime()) && (
+        <div className="flex items-center text-[10px] uppercase tracking-widest text-muted-foreground font-mono tabular-nums">
+          <span>Updated {formatDistanceToNow(new Date(item.updated_at), { addSuffix: true })}</span>
+        </div>
+      )}
     </motion.div>
   );
 }
