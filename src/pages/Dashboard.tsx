@@ -104,7 +104,7 @@ export default function Dashboard() {
               <Sparkles className="h-5 w-5 text-primary" /> Dashboard
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {total > 0 ? `${total} videos across ${categoryGroups.length} categories` : "Welcome — add your first video"}
+              {total > 0 ? `${total} telltales across ${categoryGroups.length} categories` : "Welcome — add your first telltale"}
             </p>
           </div>
           <motion.button
@@ -113,13 +113,13 @@ export default function Dashboard() {
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <PlusCircle className="h-4 w-4" />
-            Add Video
+            Add Telltale
           </motion.button>
         </div>
 
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3">
-          <QuickAction label="Add Video" icon={PlusCircle} onClick={() => navigate("/telltales/new")} />
+          <QuickAction label="Add Telltale" icon={PlusCircle} onClick={() => navigate("/telltales/new")} />
           {isAdmin && <QuickAction label="Manage Users" icon={Users} onClick={() => navigate("/admin/users")} />}
           {isAdmin && <QuickAction label="View Analytics" icon={BarChart3} onClick={() => navigate("/admin/analytics")} />}
         </div>
