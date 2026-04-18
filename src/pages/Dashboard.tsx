@@ -104,7 +104,7 @@ export default function Dashboard() {
               <Sparkles className="h-5 w-5 text-primary" /> Dashboard
             </h1>
             <p className="text-sm text-muted-foreground mt-1">
-              {total > 0 ? `${total} videos across ${categoryGroups.length} categories` : "Welcome — add your first video"}
+              {total > 0 ? `${total} telltales across ${categoryGroups.length} categories` : "Welcome — add your first telltale"}
             </p>
           </div>
           <motion.button
@@ -113,13 +113,13 @@ export default function Dashboard() {
             className="flex items-center gap-2 bg-primary text-primary-foreground px-4 py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity"
           >
             <PlusCircle className="h-4 w-4" />
-            Add Video
+            Add Telltale
           </motion.button>
         </div>
 
         {/* Quick Actions */}
         <div className="flex flex-wrap gap-3">
-          <QuickAction label="Add Video" icon={PlusCircle} onClick={() => navigate("/telltales/new")} />
+          <QuickAction label="Add Telltale" icon={PlusCircle} onClick={() => navigate("/telltales/new")} />
           {isAdmin && <QuickAction label="Manage Users" icon={Users} onClick={() => navigate("/admin/users")} />}
           {isAdmin && <QuickAction label="View Analytics" icon={BarChart3} onClick={() => navigate("/admin/analytics")} />}
         </div>
@@ -132,7 +132,7 @@ export default function Dashboard() {
         ) : (
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
             <StatCard label="Total Categories" value={String(categoryGroups.length).padStart(2, "0")} icon={FolderKanban} gradient="bg-gradient-to-br from-primary to-purple-500" />
-            <StatCard label="Total Videos" value={String(total).padStart(2, "0")} icon={Film} gradient="bg-gradient-to-br from-blue-500 to-cyan-500" />
+            <StatCard label="Total Telltales" value={String(total).padStart(2, "0")} icon={Film} gradient="bg-gradient-to-br from-blue-500 to-cyan-500" />
             <StatCard label="Recent Uploads" value={String(recentUploads.length).padStart(2, "0")} icon={Clock} gradient="bg-gradient-to-br from-emerald-500 to-teal-500" />
           </div>
         )}
@@ -148,7 +148,7 @@ export default function Dashboard() {
             </div>
           ) : categoryGroups.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-xl p-8 text-center">
-              <p className="text-sm text-muted-foreground">No categories yet. Add a video to get started.</p>
+              <p className="text-sm text-muted-foreground">No categories yet. Add a telltale to get started.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -176,9 +176,9 @@ export default function Dashboard() {
                       </span>
                     </div>
                     <h3 className="text-base font-semibold tracking-tight text-foreground mb-1">{cat.name}</h3>
-                    <p className="text-sm text-muted-foreground mb-4">{cat.count} {cat.count === 1 ? "Video" : "Videos"}</p>
+                    <p className="text-sm text-muted-foreground mb-4">{cat.count} {cat.count === 1 ? "Telltale" : "Telltales"}</p>
                     <div className="flex items-center gap-1 text-xs font-medium text-primary group-hover:gap-2 transition-all">
-                      View Videos <ArrowRight className="h-3 w-3" />
+                      View Telltales <ArrowRight className="h-3 w-3" />
                     </div>
                   </motion.div>
                 );
@@ -191,7 +191,7 @@ export default function Dashboard() {
         {!isLoading && categoryGroups.length > 0 && (
           <div className="bg-card border border-border rounded-xl p-5" style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}>
             <h2 className="text-sm font-semibold tracking-tight text-foreground mb-4 flex items-center gap-2">
-              <BarChart3 className="h-4 w-4 text-muted-foreground" /> Videos per Category
+              <BarChart3 className="h-4 w-4 text-muted-foreground" /> Telltales per Category
             </h2>
             <div className="h-56">
               <ResponsiveContainer width="100%" height="100%">
@@ -239,7 +239,7 @@ export default function Dashboard() {
             </div>
           ) : recentUploads.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-xl p-8 text-center">
-              <p className="text-sm text-muted-foreground">No videos yet. Create your first one!</p>
+              <p className="text-sm text-muted-foreground">No telltales yet. Create your first one!</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
