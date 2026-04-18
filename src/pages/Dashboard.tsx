@@ -148,7 +148,7 @@ export default function Dashboard() {
             </div>
           ) : categoryGroups.length === 0 ? (
             <div className="bg-card border border-dashed border-border rounded-xl p-8 text-center">
-              <p className="text-sm text-muted-foreground">No categories yet. Add a video to get started.</p>
+              <p className="text-sm text-muted-foreground">No categories yet. Add a telltale to get started.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
