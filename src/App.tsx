@@ -4,6 +4,7 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { AuthProvider } from "@/hooks/use-auth";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ErrorBoundary } from "@/components/ErrorBoundary";
 import Dashboard from "./pages/Dashboard";
 import TelltaleList from "./pages/TelltaleList";
 import AddTelltale from "./pages/AddTelltale";
@@ -27,28 +28,30 @@ const App = () => (
       <Sonner />
       <BrowserRouter>
         <AuthProvider>
-          <Routes>
-            {/* Public auth routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/pending" element={<PendingApproval />} />
+          <ErrorBoundary>
+            <Routes>
+              {/* Public auth routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/pending" element={<PendingApproval />} />
 
-            {/* Protected routes - require approved status */}
-            <Route path="/" element={<ProtectedRoute requireApproved><Dashboard /></ProtectedRoute>} />
-            <Route path="/telltales" element={<ProtectedRoute requireApproved><TelltaleList /></ProtectedRoute>} />
-            <Route path="/telltales/new" element={<ProtectedRoute requireApproved><AddTelltale /></ProtectedRoute>} />
-            <Route path="/telltales/:id" element={<ProtectedRoute requireApproved><TelltaleDetail /></ProtectedRoute>} />
-            <Route path="/favorites" element={<ProtectedRoute requireApproved><Favorites /></ProtectedRoute>} />
+              {/* Protected routes - require approved status */}
+              <Route path="/" element={<ProtectedRoute requireApproved><Dashboard /></ProtectedRoute>} />
+              <Route path="/telltales" element={<ProtectedRoute requireApproved><TelltaleList /></ProtectedRoute>} />
+              <Route path="/telltales/new" element={<ProtectedRoute requireApproved><AddTelltale /></ProtectedRoute>} />
+              <Route path="/telltales/:id" element={<ProtectedRoute requireApproved><TelltaleDetail /></ProtectedRoute>} />
+              <Route path="/favorites" element={<ProtectedRoute requireApproved><Favorites /></ProtectedRoute>} />
 
-            {/* Admin routes */}
-            <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
-            <Route path="/admin/standards" element={<ProtectedRoute requireAdmin><AdminStandards /></ProtectedRoute>} />
-            <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><AdminAnalytics /></ProtectedRoute>} />
+              {/* Admin routes */}
+              <Route path="/admin/users" element={<ProtectedRoute requireAdmin><AdminUsers /></ProtectedRoute>} />
+              <Route path="/admin/standards" element={<ProtectedRoute requireAdmin><AdminStandards /></ProtectedRoute>} />
+              <Route path="/admin/analytics" element={<ProtectedRoute requireAdmin><AdminAnalytics /></ProtectedRoute>} />
 
-            <Route path="*" element={<NotFound />} />
-          </Routes>
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </ErrorBoundary>
         </AuthProvider>
       </BrowserRouter>
     </TooltipProvider>
