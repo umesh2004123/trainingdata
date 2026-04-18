@@ -48,8 +48,8 @@ export function TelltaleCard({ item }: { item: TelltaleWithImages }) {
       )}
 
       <div className="grid grid-cols-4 gap-2 mb-4">
-        {item.telltale_images.length > 0
-          ? item.telltale_images.slice(0, 4).map((img) => (
+        {(item.telltale_images?.length ?? 0) > 0
+          ? item.telltale_images!.slice(0, 4).map((img) => (
               <div key={img.id} className="aspect-square bg-secondary rounded-md overflow-hidden border border-border">
                 <img src={img.url} className="w-full h-full object-cover" alt="" loading="lazy" />
               </div>
@@ -59,9 +59,9 @@ export function TelltaleCard({ item }: { item: TelltaleWithImages }) {
               <GeometricPattern id={item.id} />
             </div>
           )}
-        {item.telltale_images.length > 4 && (
+        {(item.telltale_images?.length ?? 0) > 4 && (
           <div className="aspect-square bg-secondary rounded-md flex items-center justify-center border border-border">
-            <span className="text-xs font-medium text-muted-foreground">+{item.telltale_images.length - 4}</span>
+            <span className="text-xs font-medium text-muted-foreground">+{item.telltale_images!.length - 4}</span>
           </div>
         )}
       </div>
