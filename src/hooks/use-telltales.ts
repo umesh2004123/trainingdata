@@ -11,10 +11,10 @@ export function useTelltales() {
     queryFn: async (): Promise<TelltaleWithImages[]> => {
       const { data, error } = await supabase
         .from("telltales")
-        .select("*, telltale_images(*)")
+        .select("*, telltale_images(*), telltale_standards(standard_id, standards(id, name))")
         .order("updated_at", { ascending: false });
       if (error) throw error;
-      return data as TelltaleWithImages[];
+      return data as unknown as TelltaleWithImages[];
     },
   });
 
