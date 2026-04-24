@@ -49,8 +49,7 @@ export function exportTelltalesToExcel(items: TelltaleWithImages[], filename = "
   headerKeys.forEach((_, idx) => {
     const cellRef = XLSX.utils.encode_cell({ r: 0, c: idx });
     if (ws[cellRef]) {
-      // @ts-expect-error style is consumed by sheetjs
-      ws[cellRef].s = {
+      (ws[cellRef] as Record<string, unknown>).s = {
         font: { bold: true, color: { rgb: "FFFFFF" } },
         fill: { fgColor: { rgb: "1E40AF" } },
         alignment: { horizontal: "left", vertical: "center" },
