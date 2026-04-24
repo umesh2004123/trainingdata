@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 export function ProtectedRoute({ children, requireApproved = false, requireAdmin = false }: ProtectedRouteProps) {
-  const { user, profile, isAdmin, isApproved, isLoading } = useAuth();
+  const { user, isAdmin, isApproved, isTeamMember, isLoading } = useAuth();
 
   if (isLoading) {
     return (
@@ -30,7 +30,7 @@ export function ProtectedRoute({ children, requireApproved = false, requireAdmin
     return <Navigate to="/" replace />;
   }
 
-  if (requireApproved && !isApproved && !isAdmin) {
+  if (requireApproved && !isApproved && !isAdmin && !isTeamMember) {
     return <Navigate to="/pending" replace />;
   }
 
