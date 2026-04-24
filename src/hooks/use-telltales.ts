@@ -19,12 +19,15 @@ export function useTelltales() {
   });
 
   useEffect(() => {
-    const channel = supabase
-      .channel("telltales-realtime")
+    const channel = supabase.channel(`telltales-realtime-${Math.random().toString(36).slice(2)}`);
+    channel
       .on("postgres_changes", { event: "*", schema: "public", table: "telltales" }, () => {
         queryClient.invalidateQueries({ queryKey: ["telltales"] });
       })
       .on("postgres_changes", { event: "*", schema: "public", table: "telltale_images" }, () => {
+        queryClient.invalidateQueries({ queryKey: ["telltales"] });
+      })
+      .on("postgres_changes", { event: "*", schema: "public", table: "telltale_standards" }, () => {
         queryClient.invalidateQueries({ queryKey: ["telltales"] });
       })
       .subscribe();
