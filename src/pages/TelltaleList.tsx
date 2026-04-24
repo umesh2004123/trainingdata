@@ -1,29 +1,58 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useTelltales } from "@/hooks/use-telltales";
 import { TelltaleCard } from "@/components/TelltaleCard";
 import { StatusFilter } from "@/components/StatusFilter";
+import { StandardsFilter } from "@/components/StandardsFilter";
 import { AppLayout } from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { TelltaleStatus } from "@/types/telltale";
 import { AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
+import { exportTelltalesToExcel } from "@/lib/export-telltales";
+import { toast } from "sonner";
 
 export default function TelltaleList() {
   const { data: telltales, isLoading } = useTelltales();
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState<TelltaleStatus | "all">("all");
+  const [selectedStandards, setSelectedStandards] = useState<string[]>([]);
+  const [matchMode, setMatchMode] = useState<"any" | "all">("any");
 
-  const filtered = telltales?.filter((t) => {
-    const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
-    const matchesStatus = statusFilter === "all" || t.status === statusFilter;
-    return matchesSearch && matchesStatus;
-  }) || [];
+  const filtered = useMemo(() => {
+    return (telltales || []).filter((t) => {
+      const matchesSearch = t.name.toLowerCase().includes(search.toLowerCase());
+      const matchesStatus = statusFilter === "all" || t.status === statusFilter;
+      const tStdIds = (t.telltale_standards || []).map((s) => s.standard_id);
+      let matchesStandards = true;
+      if (selectedStandards.length > 0) {
+        matchesStandards =
+          matchMode === "all"
+            ? selectedStandards.every((id) => tStdIds.includes(id))
+            : selectedStandards.some((id) => tStdIds.includes(id));
+      }
+      return matchesSearch && matchesStatus && matchesStandards;
+    });
+  }, [telltales, search, statusFilter, selectedStandards, matchMode]);
+
+  const handleExport = () => {
+    if (filtered.length === 0) {
+      toast.error("No telltales to export with current filters.");
+      return;
+    }
+    exportTelltalesToExcel(filtered, `telltales-${new Date().toISOString().slice(0, 10)}.xlsx`);
+    toast.success(`Exported ${filtered.length} telltale${filtered.length === 1 ? "" : "s"} to Excel.`);
+  };
 
   return (
     <AppLayout>
       <div className="max-w-6xl mx-auto space-y-6">
-        <h1 className="text-2xl font-semibold tracking-tight text-foreground">Telltales</h1>
+        <div className="flex items-baseline justify-between gap-4 flex-wrap">
+          <h1 className="text-2xl font-semibold tracking-tight text-foreground">Telltales</h1>
+          <p className="text-sm text-muted-foreground tabular-nums">
+            {filtered.length} of {telltales?.length || 0}
+          </p>
+        </div>
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative flex-1 max-w-sm">
@@ -37,6 +66,14 @@ export default function TelltaleList() {
           </div>
           <StatusFilter value={statusFilter} onChange={setStatusFilter} />
         </div>
+
+        <StandardsFilter
+          selected={selectedStandards}
+          onChange={setSelectedStandards}
+          mode={matchMode}
+          onModeChange={setMatchMode}
+          onExport={handleExport}
+        />
 
         {isLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
