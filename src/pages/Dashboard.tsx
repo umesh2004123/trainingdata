@@ -70,6 +70,7 @@ const CATEGORY_GRADIENTS = [
 export default function Dashboard() {
   const { data: telltales, isLoading } = useTelltales();
   const { data: recentlyViewed } = useRecentlyViewed();
+  const { data: standards } = useStandards();
   const { isAdmin } = useAuth();
   const navigate = useNavigate();
 
