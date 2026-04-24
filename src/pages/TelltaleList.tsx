@@ -36,13 +36,18 @@ export default function TelltaleList() {
     });
   }, [telltales, search, statusFilter, selectedStandards, matchMode]);
 
-  const handleExport = () => {
+  const handleExport = async () => {
     if (filtered.length === 0) {
       toast.error("No telltales to export with current filters.");
       return;
     }
-    exportTelltalesToExcel(filtered, `telltales-${new Date().toISOString().slice(0, 10)}.xlsx`);
-    toast.success(`Exported ${filtered.length} telltale${filtered.length === 1 ? "" : "s"} to Excel.`);
+    const loadingId = toast.loading(`Preparing Excel with ${filtered.length} telltale${filtered.length === 1 ? "" : "s"} (embedding images)...`);
+    try {
+      await exportTelltalesToExcel(filtered, `telltales-${new Date().toISOString().slice(0, 10)}.xlsx`);
+      toast.success(`Exported ${filtered.length} telltale${filtered.length === 1 ? "" : "s"} to Excel.`, { id: loadingId });
+    } catch (e) {
+      toast.error("Export failed. Please try again.", { id: loadingId });
+    }
   };
 
   return (
