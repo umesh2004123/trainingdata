@@ -11,6 +11,7 @@ import { AnimatePresence } from "framer-motion";
 import { Search } from "lucide-react";
 import { exportTelltalesToExcel } from "@/lib/export-telltales";
 import { toast } from "sonner";
+import { RolePermissionsBanner } from "@/components/RolePermissionsBanner";
 
 export default function TelltaleList() {
   const { data: telltales, isLoading } = useTelltales();
@@ -53,6 +54,8 @@ export default function TelltaleList() {
             {filtered.length} of {telltales?.length || 0}
           </p>
         </div>
+
+        <RolePermissionsBanner />
 
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
           <div className="relative flex-1 max-w-sm">
