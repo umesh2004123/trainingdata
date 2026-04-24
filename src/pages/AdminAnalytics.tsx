@@ -148,7 +148,10 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
-        {/* Standard Usage */}
+        {/* Standards breakdown (per-standard counts + intersection counter) */}
+        <StandardsBreakdown />
+
+        {/* Standard Usage chart */}
         <div className="bg-card border border-border rounded-xl p-6" style={{ boxShadow: "0 1px 2px 0 rgb(0 0 0 / 0.05)" }}>
           <div className="flex items-center gap-2 mb-4">
             <BarChart3 className="h-4 w-4 text-muted-foreground" />
