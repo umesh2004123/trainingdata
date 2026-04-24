@@ -1,5 +1,6 @@
 import { AppLayout } from "@/components/AppLayout";
 import { useAnalyticsOverview, useUserGrowth, useStandardUsage, useRecentEvents, useRecentTelltales } from "@/hooks/use-analytics";
+import { StandardsBreakdown } from "@/components/StandardsBreakdown";
 import { Skeleton } from "@/components/ui/skeleton";
 import { StatusBadge } from "@/components/StatusBadge";
 import { motion } from "framer-motion";
