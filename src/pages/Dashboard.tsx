@@ -2,13 +2,15 @@ import { useMemo } from "react";
 import { useTelltales } from "@/hooks/use-telltales";
 import { useRecentlyViewed } from "@/hooks/use-favorites";
 import { useAuth } from "@/hooks/use-auth";
+import { useStandards } from "@/hooks/use-standards";
 import { motion } from "framer-motion";
 import { TelltaleCard } from "@/components/TelltaleCard";
+import { StandardsBreakdown } from "@/components/StandardsBreakdown";
 import { useNavigate } from "react-router-dom";
 import { AppLayout } from "@/components/AppLayout";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  PlusCircle, Users, BarChart3, Clock, FolderKanban, Film, Layers, Sparkles, ArrowRight,
+  PlusCircle, Users, BarChart3, Clock, FolderKanban, Film, Layers, Sparkles, ArrowRight, BookOpen,
 } from "lucide-react";
 import {
   BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid,
